@@ -105,7 +105,7 @@ class CudaPackage(PackageBase):
     conflicts('%clang@:3.7,7.1:', when='+cuda ^cuda@10.1.105' + arch_platform)
     conflicts('%clang@:3.7,8.1:',
               when='+cuda ^cuda@10.1.105:10.1.243' + arch_platform)
-    conflicts('%clang@:3.2,9.0:', when='+cuda ^cuda@10.2.89' + arch_platform)
+    conflicts('%clang@:3.2,9.0:9.9', when='+cuda ^cuda@10.2.89' + arch_platform)
 
     # x86_64 vs. ppc64le differ according to NVidia docs
     # Linux ppc64le compiler conflicts from Table from the docs below:
