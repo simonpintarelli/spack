@@ -69,7 +69,13 @@ class Sirius(CMakePackage, CudaPackage):
     depends_on('magma', when='+magma')
 
     depends_on('spfft', when='@6.4.0:')
+    depends_on('spfft', when='@master')
+    depends_on('spfft', when='@develop')
+    depends_on('spfft', when='@nlcg')
     depends_on('spfft+cuda', when='@6.4.0:+cuda')
+    depends_on('spfft+cuda', when='@master+cuda')
+    depends_on('spfft+cuda', when='@develop+cuda')
+    depends_on('spfft+cuda', when='@nlcg+cuda')
     depends_on('elpa+openmp', when='+elpa+openmp')
     depends_on('elpa~openmp', when='+elpa~openmp')
     depends_on('nlcglib', when='+nlcglib')
