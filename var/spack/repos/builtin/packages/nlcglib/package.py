@@ -28,6 +28,7 @@ class Nlcglib(CMakePackage, CudaPackage):
 
     homepage = "https://github.com/simonpintarelli/nlcglib"
     git      = "https://github.com/simonpintarelli/nlcglib.git"
+    url      = "https://github.com/simonpintarelli/nlcglib/archive/master.zip"
 
     maintainers = ['simonpintarelli']
 
