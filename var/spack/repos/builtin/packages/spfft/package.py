@@ -7,7 +7,7 @@
 from spack import *
 
 
-class Spfft(CMakePackage):
+class Spfft(CMakePackage, CudaPackage):
     """Sparse 3D FFT library with MPI, OpenMP, CUDA and ROCm support."""
 
     homepage = "https://github.com/eth-cscs/SpFFT"
