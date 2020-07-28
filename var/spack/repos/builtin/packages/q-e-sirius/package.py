@@ -174,7 +174,12 @@ class QESirius(Package):
     def install(self, spec, prefix):
 
         prefix_path = prefix.bin if '@:5.4.0' in spec else prefix
-        options = ['-prefix={0}'.format(prefix_path)]
+
+        # QE configure runs make veryclean by default; --save disables that
+        # which will make dev-build faster
+        options = ['--save']
+
+        options.append('-prefix={0}'.format(prefix_path))
 
         sirius = spec['sirius']
 
