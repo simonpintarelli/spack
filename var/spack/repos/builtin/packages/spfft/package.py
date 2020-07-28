@@ -13,6 +13,8 @@ class Spfft(CMakePackage, CudaPackage):
     homepage = "https://github.com/eth-cscs/SpFFT"
     url      = "https://github.com/eth-cscs/SpFFT/archive/v0.9.8.zip"
 
+    version('0.9.12', sha256='4bf879c6b3914bf5e462ef04a43656be559a8402755180301d99a080834d8fb3')
+    version('0.9.11', sha256='880aeddb6e88b4ce2ff88e78c6cac349359af10de0f4e909f305908852693593')
     version('0.9.10', sha256='9cbbb7ba5e53e17eeb45e809841d8272e5333f739c2442a99c3e255c1ddec3e9')
     version('0.9.9', sha256='a8fd7a2d767716bb73185ca03bf4c106c6981b79130f3e456e5d2e744a2b3ba0')
     version('0.9.8', sha256='f49fa51316bbfa68309e951d2375e1f6904120c93868cbe13bc2974c0b801a3f')
