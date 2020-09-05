@@ -196,7 +196,7 @@ class Sirius(CMakePackage, CudaPackage):
             cuda_arch = spec.variants['cuda_arch'].value
             if cuda_arch[0] != 'none':
                 args += [
-                    '-DCMAKE_CUDA_FLAGS=-arch=sm_{0}'.format(cuda_arch[0])
+                    '-DCUDA_ARCH={0}'.format(cuda_arch[0])
                 ]
 
         if '+rocm' in spec:
