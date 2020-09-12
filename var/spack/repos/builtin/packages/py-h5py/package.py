@@ -26,6 +26,9 @@ class PyH5py(PythonPackage):
     version('2.5.0', sha256='9833df8a679e108b561670b245bcf9f3a827b10ccb3a5fa1341523852cfac2f6')
     version('2.4.0', sha256='faaeadf4b8ca14c054b7568842e0d12690de7d5d68af4ecce5d7b8fc104d8e60')
 
+    patch('python-h5py-hd5-1.12.patch', when='^hdf5@1.12.0')
+    patch('h5py-2.10.0-hdf5-v1.12-h5i.patch', when='^hdf5@1.12.0')
+
     variant('mpi', default=True, description='Build with MPI support')
 
     # Build dependencies
