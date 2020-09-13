@@ -17,13 +17,13 @@ class QESirius(Package):
     pseudopotentials.
     """
 
-    homepage = 'https://github.com/electronic-structure/q-e-sirius/'
-    url = 'https://github.com/electronic-structure/q-e-sirius/archive/v6.5-rc4-sirius.tar.gz'
-    git = 'https://github.com/electronic-structure/q-e-sirius.git'
+    homepage = 'https://github.com/simonpintarelli/q-e-sirius/'
+    url = 'https://github.com/simonpintarelli/q-e-sirius/archive/v6.5-rc4-sirius.tar.gz'
+    git = 'https://github.com/simonpintarelli/q-e-sirius.git'
 
     maintainers = ['simonpintarelli']
 
-    version('develop', branch='ristretto')
+    version('develop', branch='ristretto-7.0.0-nlcg')
 
     version('6.5-rc2-sirius', sha256='460b678406eec36e4ee828c027929cf8720c3965a85c20084c53398b123c9ae9')
     version('6.5-rc3-sirius', sha256='1bfb8c1bba815b5ab2d733f51a8f9aa7b079f2859e6f14e4dcda708ebf172b02')
