@@ -46,7 +46,7 @@ class PyH5py(PythonPackage):
     depends_on('mpi', when='+mpi')
     depends_on('py-mpi4py', when='+mpi', type=('build', 'run'))
 
-    phases = ['configure', 'install']
+    phases = ['install'] # workaround for hdf5 1.12.0
 
     def configure(self, spec, prefix):
         self.setup_py('configure',
