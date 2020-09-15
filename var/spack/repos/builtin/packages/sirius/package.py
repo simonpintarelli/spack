@@ -97,9 +97,9 @@ class Sirius(CMakePackage, CudaPackage):
     def libs(self):
         libraries = []
 
-            libraries += ['libsirius']
-            return find_libraries(
-                libraries, root=self.prefix,
+        libraries += ['libsirius']
+        return find_libraries(
+            libraries, root=self.prefix,
             shared='+shared' in self.spec, recursive=True)
 
 
