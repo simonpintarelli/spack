@@ -210,12 +210,14 @@ class Sirius(CMakePackage, CudaPackage):
 
         if '+cuda' in spec:
             cuda_arch = spec.variants['cuda_arch'].value
-            if '@:7.0.0' in spec:
+            if '@:6.999' in spec and not ('@develop' or '@xc' in spec):
+                print('fucking shit')
                 if cuda_arch[0] != 'none':
                     args += [
                         '-DCMAKE_CUDA_FLAGS=-arch=sm_{0}'.format(cuda_arch[0])
                     ]
             else:
+                print('use new cuda arch')
                 if cuda_arch[0] != 'none':
                     args += [
                         '-DCUDA_ARCH={0}'.format(cuda_arch[0])
