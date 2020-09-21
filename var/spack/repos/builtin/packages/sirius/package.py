@@ -210,10 +210,17 @@ class Sirius(CMakePackage, CudaPackage):
 
         if '+cuda' in spec:
             cuda_arch = spec.variants['cuda_arch'].value
-            if cuda_arch[0] != 'none':
-                args += [
-                    '-DCMAKE_CUDA_FLAGS=-arch=sm_{0}'.format(cuda_arch[0])
-                ]
+            if '@:7.0.0' in spec:
+                if cuda_arch[0] != 'none':
+                    args += [
+                        '-DCMAKE_CUDA_FLAGS=-arch=sm_{0}'.format(cuda_arch[0])
+                    ]
+            else:
+                if cuda_arch[0] != 'none':
+                    args += [
+                        '-DCUDA_ARCH={0}'.format(cuda_arch[0])
+                    ]
+
 
         if '+rocm' in spec:
             archs = ",".join(self.spec.variants['amdgpu_target'].value)
