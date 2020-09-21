@@ -6,19 +6,24 @@
 
 
 class QESirius(Package):
-    """SIRIUS enabled fork of QuantumESPRESSO. """
+    """Quantum-ESPRESSO is an integrated suite of Open-Source computer codes
+    for electronic-structure calculations and materials modeling at the
+    nanoscale. It is based on density-functional theory, plane waves, and
+    pseudopotentials.
+    """
 
-    homepage = 'https://github.com/electronic-structure/q-e-sirius/'
-    url = 'https://github.com/electronic-structure/q-e-sirius/archive/v6.5-rc4-sirius.tar.gz'
-    git = 'https://github.com/electronic-structure/q-e-sirius.git'
+    homepage = 'https://github.com/simonpintarelli/q-e-sirius/'
+    url = 'https://github.com/simonpintarelli/q-e-sirius/archive/v6.5-rc4-sirius.tar.gz'
+    git = 'https://github.com/simonpintarelli/q-e-sirius.git'
 
     maintainers = ['simonpintarelli']
 
-    version('develop', branch='ristretto')
+    version('develop', branch='ristretto-7.0.0-nlcg')
 
     version('6.5-rc2-sirius', sha256='460b678406eec36e4ee828c027929cf8720c3965a85c20084c53398b123c9ae9')
     version('6.5-rc3-sirius', sha256='1bfb8c1bba815b5ab2d733f51a8f9aa7b079f2859e6f14e4dcda708ebf172b02')
     version('6.5-rc4-sirius', sha256='be5529d65e4b301d6a6d1235e8d88277171c1732768bf1cf0c7fdeae154c79f1')
+
 
     variant('mpi', default=True, description='Builds with mpi support')
     variant('openmp', default=True, description='Enables openMP support')
@@ -40,7 +45,7 @@ class QESirius(Package):
     # Apply upstream patches by default. Variant useful for 3rd party
     # patches which are incompatible with upstream patches
     desc = 'Apply recommended upstream patches. May need to be set '
-    desc += 'to False for third party patches or plugins'
+    desc = desc + 'to False for third party patches or plugins'
     variant('patch', default=True, description=desc)
 
     # QMCPACK converter patch
@@ -167,6 +172,8 @@ class QESirius(Package):
         options = ['-prefix={0}'.format(prefix_path)]
 
         sirius = spec['sirius']
+
+        print('sirius.libs: ', sirius.libs)
         options.append('LIBS={0}'.format(sirius.libs[0]))
         options.append('LD_LIBS={0}'.format(sirius.libs[0]))
 
@@ -188,18 +195,15 @@ class QESirius(Package):
             options.append('CC={0}'.format(mpi.mpicc))
         else:
             options.append('--enable-parallel=no')
-            options.append('CC={0}'.format(spack_cc))
+            options.append('CC={0}'.format(env['SPACK_CC']))
 
-        options.append('F77={0}'.format(spack_f77))
-        options.append('F90={0}'.format(spack_fc))
-
-        header_dir = sirius.headers.directories[0]
-        f90flags = 'F90FLAGS=-cpp -I {0}/sirius'.format(header_dir)
+        options.append('F77={0}'.format(env['SPACK_F77']))
+        options.append('F90={0}'.format(env['SPACK_FC']))
 
         if self.spec.satisfies('%gcc@10:'):
-            f90flags += ' -fallow-argument-mismatch'
-
-        options.append(f90flags)
+            options.append('F90FLAGS=-cpp -fallow-argument-mismatch -I {0}/sirius'.format(sirius.headers.directories[0]))
+        else:
+            options.append('F90FLAGS=-cpp -I {0}/sirius'.format(sirius.headers.directories[0]))
 
         if '+openmp' in spec:
             options.append('--enable-openmp')
