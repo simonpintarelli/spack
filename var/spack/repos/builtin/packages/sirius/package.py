@@ -20,6 +20,7 @@ class Sirius(CMakePackage, CudaPackage):
 
     version('develop', branch='develop')
     version('master', branch='master')
+    version('xc', branch='fix/xc-potential')
 
     version('7.0.0', sha256='da783df11e7b65668e29ba8d55c8a6827e2216ad6d88040f84f42ac20fd1bb99')
     version('6.5.6', sha256='c8120100bde4477545eae489ea7f9140d264a3f88696ec92728616d78f214cae',
@@ -84,9 +85,11 @@ class Sirius(CMakePackage, CudaPackage):
     depends_on('spfft', when='@6.4.0:')
     depends_on('spfft', when='@master')
     depends_on('spfft', when='@develop')
+    depends_on('spfft')
     depends_on('spfft+cuda', when='@6.4.0:+cuda')
     depends_on('spfft+cuda', when='@master+cuda')
     depends_on('spfft+cuda', when='@develop+cuda')
+    depends_on('spfft+cuda', when='+cuda')
     depends_on('spfft+rocm', when='@6.4.0:+rocm')
     depends_on('spfft+rocm', when='@master+rocm')
     depends_on('spfft+rocm', when='@develop+rocm')
