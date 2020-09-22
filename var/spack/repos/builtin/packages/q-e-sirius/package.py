@@ -198,7 +198,8 @@ class QESirius(Package):
 
         if self.spec.satisfies('%gcc@10:'):
             f90flags += ' -fallow-argument-mismatch'
-
+        if '^fftw@3:' in spec:
+            f90flags += ' -D__FFTW3'
         options.append(f90flags)
 
         if '+openmp' in spec:
@@ -246,11 +247,15 @@ class QESirius(Package):
         #   BLAS_LIBS being set
         # However, MKL is correctly picked up by qe-6.5 for BLAS and FFT if
         # MKLROOT is set (which SPACK does automatically for ^mkl)
-        if not ('quantum-espresso@6.5' in spec and '^mkl' in spec):
+        if not ('^mkl' in spec):
             options.append('BLAS_LIBS={0}'.format(lapack_blas.ld_flags))
 
         if '+scalapack' in spec:
             scalapack_option = 'intel' if '^mkl' in spec else 'yes'
+            options.append('--with-scalapack={0}'.format(scalapack_option))
+        else:
+            # prevent q-e from finding a system scalapck install
+            scalapack_option = 'no'
             options.append('--with-scalapack={0}'.format(scalapack_option))
 
         if '+elpa' in spec:
