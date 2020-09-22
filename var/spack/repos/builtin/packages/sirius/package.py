@@ -128,19 +128,19 @@ class Sirius(CMakePackage, CudaPackage):
     def libs(self):
         libraries = []
 
-        if '@6.3.0:' in self.spec:
-            libraries += ['libsirius']
+        if not ('@:6.2.999' in self.spec):
+            if '+fortran' in self.spec:
+                libraries += ['libsirius_f']
+
+            if '+cuda' in self.spec:
+                libraries += ['libsirius_cu']
 
             return find_libraries(
                 libraries, root=self.prefix,
                 shared='+shared' in self.spec, recursive=True
             )
         else:
-            if '+fortran' in self.spec:
-                libraries += ['libsirius_f']
-
-            if '+cuda' in self.spec:
-                libraries += ['libsirius_cu']
+            libraries += ['libsirius']
 
             return find_libraries(
                 libraries, root=self.prefix,
