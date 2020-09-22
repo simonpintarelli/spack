@@ -208,21 +208,13 @@ class Sirius(CMakePackage, CudaPackage):
             )
             args += ["-DELPA_INCLUDE_DIR={0}".format(elpa_incdir)]
 
-        if '+cuda' in spec:
-            cuda_arch = spec.variants['cuda_arch'].value
-            if '@:6.999' in spec and not ('@develop' or '@xc' in spec):
-                print('fucking shit')
-                if cuda_arch[0] != 'none':
-                    args += [
-                        '-DCMAKE_CUDA_FLAGS=-arch=sm_{0}'.format(cuda_arch[0])
-                    ]
-            else:
-                print('use new cuda arch')
-                if cuda_arch[0] != 'none':
-                    args += [
-                        '-DCUDA_ARCH={0}'.format(cuda_arch[0])
-                    ]
-
+        cuda_arch = spec.variants['cuda_arch'].value
+        cuda_arch_selected = cuda_arch[0] != 'none'
+        if '+cuda' in spec and cuda_arch_selected:
+            cuda_args = '-DCUDA_ARCH={0}'.format(cuda_arch[0])
+            if spec.satisfies('@:6.999'):
+                cuda_args = '-DCMAKE_CUDA_FLAGS=-arch=sm_{0}'.format(cuda_arch[0])
+            args.append(cuda_args)
 
         if '+rocm' in spec:
             archs = ",".join(self.spec.variants['amdgpu_target'].value)
