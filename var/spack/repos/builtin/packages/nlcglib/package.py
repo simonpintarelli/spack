@@ -41,6 +41,10 @@ class Nlcglib(CMakePackage, CudaPackage):
             options.append('-DUSE_OPENMP=On')
         else:
             options.append('-DUSE_OPENMP=Off')
+        if '+cuda' in self.spec:
+            options.append('-DUSE_CUDA=On')
+        else:
+            options.append('-DUSE_CUDA=Off')
         if self.spec['blas'].name in ['intel-mkl', 'intel-parallel-studio']:
             options.append('-DLAPACK_VENDOR=MKL')
         elif self.spec['blas'].name in ['openblas']:
