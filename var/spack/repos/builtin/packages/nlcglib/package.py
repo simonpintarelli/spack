@@ -28,7 +28,9 @@ class Nlcglib(CMakePackage, CudaPackage):
             values=('Debug', 'Release', 'RelWithDebInfo'))
 
     depends_on('lapack')
-    depends_on('kokkos +cuda~cuda_relocatable_device_code+cuda_lambda')
+    depends_on('kokkos +cuda~cuda_relocatable_device_code+cuda_lambda', when='+cuda')
+    depends_on('kokkos ~cuda', when='~cuda')
+    depends_on('kokkos ~cuda+openmp', when='~cuda+openmp')
     depends_on('kokkos-nvcc-wrapper', when='+wrapper')
     depends_on('kokkos +cuda~cuda_relocatable_device_code+cuda_lambda+wrapper', when='+wrapper')
     depends_on("cmake@3.15:", type='build')
@@ -41,6 +43,10 @@ class Nlcglib(CMakePackage, CudaPackage):
             options.append('-DUSE_OPENMP=On')
         else:
             options.append('-DUSE_OPENMP=Off')
+        if '+cuda' in self.spec:
+            options.append('-DUSE_CUDA=On')
+        else:
+            options.append('-DUSE_CUDA=Off')
         if self.spec['blas'].name in ['intel-mkl', 'intel-parallel-studio']:
             options.append('-DLAPACK_VENDOR=MKL')
         elif self.spec['blas'].name in ['openblas']:
