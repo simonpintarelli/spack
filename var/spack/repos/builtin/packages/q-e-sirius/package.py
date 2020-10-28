@@ -19,6 +19,7 @@ class QESirius(Package):
     version('6.5-rc2-sirius', sha256='460b678406eec36e4ee828c027929cf8720c3965a85c20084c53398b123c9ae9')
     version('6.5-rc3-sirius', sha256='1bfb8c1bba815b5ab2d733f51a8f9aa7b079f2859e6f14e4dcda708ebf172b02')
     version('6.5-rc4-sirius', sha256='be5529d65e4b301d6a6d1235e8d88277171c1732768bf1cf0c7fdeae154c79f1')
+    version('6.5-rc5-sirius', sha256='70cd5e0951434ef50463a8271ec2909bba96f594dfa6e765d84aa0af716d989b')
 
     variant('mpi', default=True, description='Builds with mpi support')
     variant('openmp', default=True, description='Enables openMP support')
