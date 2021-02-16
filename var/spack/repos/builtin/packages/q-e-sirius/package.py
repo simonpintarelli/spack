@@ -15,6 +15,7 @@ class QESirius(Package):
     maintainers = ['simonpintarelli']
 
     version('develop', branch='ristretto')
+    version('ristretto-sirius-scf', branch='ristretto-sirius-scf')
 
     version('6.5-rc6-sirius', sha256='ca2e6ccf15a234f5b97cb7f8b224dfd1b7722e669ef1efe568bfbe1997b1bf54')
     version('6.5-rc5-sirius', sha256='70cd5e0951434ef50463a8271ec2909bba96f594dfa6e765d84aa0af716d989b')
