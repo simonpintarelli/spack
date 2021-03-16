@@ -109,4 +109,11 @@ def location(parser, args):
                         tty.die("Build directory does not exist yet. "
                                 "Run this to create it:",
                                 "spack stage " + " ".join(args.spec))
-                    print(pkg.stage.source_path)
+
+                    # Build systems that support out of source builds define a
+                    # build_directory attribute, otherwise we assume the package
+                    # is built in-source
+                    if hasattr(pkg, 'build_directory'):
+                        print(pkg.build_directory)
+                    else:
+                        print(pkg.stage.source_path)
