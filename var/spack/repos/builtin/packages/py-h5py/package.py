@@ -36,7 +36,9 @@ class PyH5py(PythonPackage):
 
     # Build dependencies
     depends_on('py-cython@0.23:', type='build', when='@:2.99')
-    depends_on('py-cython@0.29:', type=('build'), when='@3.0.0:')
+    depends_on('py-cython@0.29:', type=('build'), when='@3.0.0:^python@:3.7.99')
+    depends_on('py-cython@0.29.14:', type=('build'), when='@3.0.0:^python@3.8.0:3.8.99')
+    depends_on('py-cython@0.29.15:', type=('build'), when='@3.0.0:^python@3.9.0:')
     depends_on('py-pkgconfig', type='build')
     depends_on('py-setuptools', type='build')
     depends_on('py-wheel', type='build', when='@3.0.0:')
@@ -53,6 +55,7 @@ class PyH5py(PythonPackage):
 
     # MPI dependencies
     depends_on('hdf5+mpi', when='+mpi')
+    depends_on('hdf5~mpi', when='~mpi')
     depends_on('mpi', when='+mpi')
     depends_on('py-mpi4py', when='@:2.99 +mpi', type=('build', 'run'))
     depends_on('py-mpi4py@3.0.0:', when='@3.0.0: +mpi', type=('build', 'run'))

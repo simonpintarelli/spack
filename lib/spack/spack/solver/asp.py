@@ -22,6 +22,7 @@ try:
     clingo_cffi = hasattr(clingo.Symbol, '_rep')
 except ImportError:
     clingo = None  # type: ignore
+    clingo_cffi = False
 
 import llnl.util.lang
 import llnl.util.tty as tty
@@ -38,6 +39,7 @@ import spack.spec
 import spack.package
 import spack.package_prefs
 import spack.repo
+import spack.bootstrap
 import spack.variant
 import spack.version
 
@@ -246,7 +248,20 @@ class PyclingoDriver(object):
             asp (file-like): optional stream to write a text-based ASP program
                 for debugging or verification.
         """
-        assert clingo, "PyclingoDriver requires clingo with Python support"
+        global clingo
+        if not clingo:
+            # TODO: Find a way to vendor the concrete spec
+            # in a cross-platform way
+            with spack.bootstrap.ensure_bootstrap_configuration():
+                generic_target = archspec.cpu.host().family
+                spec_str = 'clingo-bootstrap@spack+python target={0}'.format(
+                    str(generic_target)
+                )
+                clingo_spec = spack.spec.Spec(spec_str)
+                clingo_spec._old_concretize()
+                spack.bootstrap.make_module_available(
+                    'clingo', spec=clingo_spec, install=True)
+                import clingo
         self.out = asp or llnl.util.lang.Devnull()
         self.cores = cores
 
@@ -951,16 +966,17 @@ class SpackSolverSetup(object):
                 if value == '*':
                     continue
 
-                # validate variant value
-                reserved_names = spack.directives.reserved_names
-                if not spec.virtual and vname not in reserved_names:
-                    try:
-                        variant_def = spec.package.variants[vname]
-                    except KeyError:
-                        msg = 'variant "{0}" not found in package "{1}"'
-                        raise RuntimeError(msg.format(vname, spec.name))
-                    else:
-                        variant_def.validate_or_raise(variant, spec.package)
+                # validate variant value only if spec not concrete
+                if not spec.concrete:
+                    reserved_names = spack.directives.reserved_names
+                    if not spec.virtual and vname not in reserved_names:
+                        try:
+                            variant_def = spec.package.variants[vname]
+                        except KeyError:
+                            msg = 'variant "{0}" not found in package "{1}"'
+                            raise RuntimeError(msg.format(vname, spec.name))
+                        else:
+                            variant_def.validate_or_raise(variant, spec.package)
 
                 clauses.append(f.variant_value(spec.name, vname, value))
 
@@ -1599,8 +1615,7 @@ def _develop_specs_from_env(spec, env):
     if not dev_info:
         return
 
-    path = dev_info['path']
-    path = path if os.path.isabs(path) else os.path.join(env.path, path)
+    path = os.path.normpath(os.path.join(env.path, dev_info['path']))
 
     if 'dev_path' in spec.variants:
         assert spec.variants['dev_path'].value == path

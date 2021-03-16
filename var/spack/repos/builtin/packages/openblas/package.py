@@ -43,6 +43,7 @@ class Openblas(MakefilePackage):
     variant('pic', default=True, description='Build position independent code')
     variant('shared', default=True, description='Build shared libraries')
     variant('consistent_fpcsr', default=False, description='Synchronize FP CSR between threads (x86/x86_64 only)')
+    variant('bignuma', default=False, description='Enable experimental support for up to 1024 CPUs/Cores and 128 numa nodes')
 
     variant('locking', default=True, description='Build with thread safety')
     variant(
@@ -217,8 +218,10 @@ class Openblas(MakefilePackage):
         if microarch.vendor == 'generic':
             # User requested a generic platform, or we couldn't find a good
             # match for the requested one. Allow OpenBLAS to determine
-            # an optimized kernel at run time.
-            args.append('DYNAMIC_ARCH=1')
+            # an optimized kernel at run time, including older CPUs, while
+            # forcing it not to add flags for the current host compiler.
+            args.extend(['DYNAMIC_ARCH=1', 'DYNAMIC_OLDER=1',
+                         'TARGET=GENERIC'])
         elif microarch.name in skylake:
             # Special case for renaming skylake family
             args.append('TARGET=SKYLAKEX')
@@ -302,6 +305,9 @@ class Openblas(MakefilePackage):
         # prefix, for instance, .../lib/spack/env/gcc/ranlib, which will fail.
         if self.spec.satisfies('@0.3.13:'):
             make_defs.append('RANLIB=ranlib')
+
+        if self.spec.satisfies('+bignuma'):
+            make_defs.append('BIGNUMA=1')
 
         return make_defs
 
