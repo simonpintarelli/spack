@@ -50,7 +50,7 @@ class PyScipy(PythonPackage):
     depends_on('python@3.7:', when='@1.6:1.6.1', type=('build', 'link', 'run'))
     depends_on('python@3.7:3.9.999', when='@1.6.2:', type=('build', 'link', 'run'))
     depends_on('py-setuptools', when='@:1.6.1', type='build')
-    depends_on('py-setuptools@:51.0.0', when='@1.6.2:', type='build')
+    # depends_on('py-setuptools@:51.0.0', when='@1.6.2:', type='build')
     depends_on('py-pybind11@2.2.4:', when='@1.4.0', type=('build', 'link'))
     depends_on('py-pybind11@2.4.0:', when='@1.4.1:1.4.999', type=('build', 'link'))
     depends_on('py-pybind11@2.4.3:', when='@1.5:1.6.1', type=('build', 'link'))
