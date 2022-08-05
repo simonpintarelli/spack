@@ -4,7 +4,8 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 
-from spack.package import *
+from spack import *
+
 
 
 class Cosma(CMakePackage):
@@ -19,27 +20,33 @@ class Cosma(CMakePackage):
 
     # note: The default archives produced with github do not have the archives
     #       of the submodules.
-    version("master", branch="master", submodules=True)
-    version("2.5.1", sha256="085b7787597374244bbb1eb89bc69bf58c35f6c85be805e881e1c0b25166c3ce")
-    version("2.5.0", sha256="7f68bb0ee5c80f9b8df858afcbd017ad4ed87ac09439d13d7d890844dbdd3d54")
-    version("2.4.0", sha256="5714315ce06d48037f86cfee2d7f19340643fee95e9d7f1e92dc1b623b67e395")
-    version("2.3.0", sha256="0c01c2deb5a0cd177952178350188a62c42ce55e604d7948ac472f55bf0d4815")
-    version("2.2.0", sha256="1eb92a98110df595070a12193b9221eecf9d103ced8836c960f6c79a2bd553ca")
-    version("2.0.7", sha256="8d70bfcbda6239b6a8fbeaca138790bbe58c0c3aa576879480d2632d4936cf7e")
-    version("2.0.2", sha256="4f3354828bc718f3eef2f0098c3bdca3499297497a220da32db1acd57920c68d")
+    version('master', branch='master', submodules=True)
+    version('2.6.0', sha256='88405e382b37d247b67403dc3386758b1d2f133a46a902b4be08ffbc43397539')
+    version('2.5.1', sha256='085b7787597374244bbb1eb89bc69bf58c35f6c85be805e881e1c0b25166c3ce')
+    version('2.5.0', sha256='7f68bb0ee5c80f9b8df858afcbd017ad4ed87ac09439d13d7d890844dbdd3d54')
+    version('2.4.0', sha256='5714315ce06d48037f86cfee2d7f19340643fee95e9d7f1e92dc1b623b67e395')
+    version('2.3.0', sha256='0c01c2deb5a0cd177952178350188a62c42ce55e604d7948ac472f55bf0d4815')
+    version('2.2.0', sha256='1eb92a98110df595070a12193b9221eecf9d103ced8836c960f6c79a2bd553ca')
+    version('2.0.7', sha256='8d70bfcbda6239b6a8fbeaca138790bbe58c0c3aa576879480d2632d4936cf7e')
+    version('2.0.2', sha256='4f3354828bc718f3eef2f0098c3bdca3499297497a220da32db1acd57920c68d')
 
     # We just need the libraries of cuda and rocm, so no need to extend
     # CudaPackage or ROCmPackage.
-    variant("cuda", default=False, description="Build with cuBLAS support")
-    variant("rocm", default=False, description="Build with rocBLAS support")
-    variant("scalapack", default=False, description="Build with ScaLAPACK API")
+    variant('cuda', default=False, description='Build with cuBLAS support')
+    variant('rocm', default=False, description='Build with rocBLAS support')
+    variant('scalapack', default=False, description='Build with ScaLAPACK API')
+    variant('gpu_direct', default=False)
+    variant('nccl', default=False)
+    variant('tests', default=False)
+    variant('apps', default=False)
 
-    depends_on("cmake@3.12:", type="build")
-    depends_on("mpi@3:")
-    depends_on("blas", when="~cuda ~rocm")
-    depends_on("scalapack", when="+scalapack")
-    depends_on("cuda", when="+cuda")
-    depends_on("rocblas", when="+rocm")
+    depends_on('cmake@3.12:', type='build')
+    depends_on('mpi@3:')
+    depends_on('blas', when='~cuda ~rocm')
+    depends_on('scalapack', when='+scalapack')
+    depends_on('cuda', when='+cuda')
+    depends_on('rocblas', when='+rocm')
+    depends_on('nccl', when='+nccl')
 
     def url_for_version(self, version):
         if version <= Version("2.3.0"):
@@ -56,14 +63,15 @@ class Cosma(CMakePackage):
             env.set("CUDA_PATH", self.spec["cuda"].prefix)
 
     def cosma_blas_cmake_arg(self):
+        # the order matters, cuda must come before intel*-mkl
         query_to_cmake_arg = [
-            ("^intel-mkl", "MKL"),
-            ("^intel-oneapi-mkl", "MKL"),
-            ("^cray-libsci", "CRAY_LIBSCI"),
-            ("^netlib-lapack", "CUSTOM"),
-            ("^openblas", "OPENBLAS"),
-            ("+cuda", "CUDA"),
-            ("+rocm", "ROCM"),
+            ('+cuda', 'CUDA'),
+            ('^intel-mkl', 'MKL'),
+            ('^intel-oneapi-mkl', 'MKL'),
+            ('^cray-libsci', 'CRAY_LIBSCI'),
+            ('^netlib-lapack', 'CUSTOM'),
+            ('^openblas', 'OPENBLAS'),
+            ('+rocm', 'ROCM')
         ]
 
         if self.version >= Version("2.4.0"):
@@ -91,10 +99,12 @@ class Cosma(CMakePackage):
 
     def cmake_args(self):
         return [
-            self.define("COSMA_WITH_TESTS", "OFF"),
-            self.define("COSMA_WITH_APPS", "OFF"),
-            self.define("COSMA_WITH_PROFILING", "OFF"),
-            self.define("COSMA_WITH_BENCHMARKS", "OFF"),
-            self.define("COSMA_BLAS", self.cosma_blas_cmake_arg()),
-            self.define("COSMA_SCALAPACK", self.cosma_scalapack_cmake_arg()),
+            self.define_from_variant('COSMA_WITH_TESTS', 'tests'),
+            self.define_from_variant('COSMA_WITH_APPS', 'apps'),
+            self.define('COSMA_WITH_PROFILING', 'OFF'),
+            self.define('COSMA_WITH_BENCHMARKS', 'OFF'),
+            self.define_from_variant('COSMA_WITH_NCCL', 'nccl'),
+            self.define_from_variant('COSMA_WITH_GPU_AWARE_MPI', 'gpu_direct'),
+            self.define('COSMA_BLAS', self.cosma_blas_cmake_arg()),
+            self.define('COSMA_SCALAPACK', self.cosma_scalapack_cmake_arg())
         ]
