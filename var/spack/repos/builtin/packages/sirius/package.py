@@ -128,6 +128,7 @@ class Sirius(CMakePackage, CudaPackage, ROCmPackage):
     conflicts('+boost_filesystem', when='~apps')
     conflicts('^libxc@5.0.0')  # known to produce incorrect results
     conflicts('+single_precision', when='@:7.2.4')
+    conflicts('+scalapack', when='^cray-libsci')
 
     # Propagate openmp to blas
     depends_on('openblas threads=openmp', when='+openmp ^openblas')
@@ -213,6 +214,9 @@ class Sirius(CMakePackage, CudaPackage, ROCmPackage):
                 self.define('SCALAPACK_LIBRARIES',
                             spec['scalapack'].libs.joined(';'))
             ])
+
+        if '+cray-libsci' in spec:
+            args.extend(self.define('USE_CRAY_LIBSCI', true))
 
         if spec['blas'].name in ['intel-mkl', 'intel-parallel-studio']:
             args.append(self.define('USE_MKL', 'ON'))
