@@ -104,6 +104,13 @@ class Pika(CMakePackage, CudaPackage, ROCmPackage):
     patch("transform_mpi_includes.patch", when="@0.3.0 +mpi")
     patch("mimalloc_no_version_requirement.patch", when="@:0.5 malloc=mimalloc")
 
+    # Fix missing template instantiation on macOS
+    patch(
+        "https://github.com/pika-org/pika/commit/dd1dfb85781ec2e76fa37ce7311323e69fbe42a1.patch?full_index=1",
+        sha256="2944f746f5ae4385aba11b7c4a2f991abc108b08ea3dc394bf61c20fc7a2c4f2",
+        when="@0.7.0 platform=darwin",
+    )
+
     def cmake_args(self):
         spec, args = self.spec, []
 
@@ -125,7 +132,7 @@ class Pika(CMakePackage, CudaPackage, ROCmPackage):
         # HIP support requires compiling with hipcc
         if "+rocm" in self.spec:
             args += [self.define("CMAKE_CXX_COMPILER", self.spec["hip"].hipcc)]
-            if self.spec.satisfies("^cmake@3.21:"):
+            if self.spec.satisfies("^cmake@3.21.0:3.21.2"):
                 args += [self.define("__skip_rocmclang", True)]
 
         return args
