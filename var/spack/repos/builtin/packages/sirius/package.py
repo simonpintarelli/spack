@@ -141,7 +141,7 @@ class Sirius(CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on('eigen@3.4.0:', when='@7.4: +tests')
 
-    depends_on('costa+shared', when='@7.4:')
+    depends_on('costa+shared', when='@7.3.2:')
 
     # TODO:
     # add support for CRAY_LIBSCI, testing
@@ -178,6 +178,7 @@ class Sirius(CMakePackage, CudaPackage, ROCmPackage):
         spec = self.spec
 
         args = [
+            self.define_from_variant('USE_CRAY_LIBSCI', 'libsci'),
             self.define_from_variant('USE_OPENMP', 'openmp'),
             self.define_from_variant('USE_ELPA', 'elpa'),
             self.define_from_variant('USE_MAGMA', 'magma'),
@@ -214,9 +215,6 @@ class Sirius(CMakePackage, CudaPackage, ROCmPackage):
                 self.define('SCALAPACK_LIBRARIES',
                             spec['scalapack'].libs.joined(';'))
             ])
-
-        if '+cray-libsci' in spec:
-            args.extend(self.define('USE_CRAY_LIBSCI', true))
 
         if spec['blas'].name in ['intel-mkl', 'intel-parallel-studio']:
             args.append(self.define('USE_MKL', 'ON'))
