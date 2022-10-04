@@ -128,7 +128,6 @@ class Sirius(CMakePackage, CudaPackage, ROCmPackage):
     conflicts('+boost_filesystem', when='~apps')
     conflicts('^libxc@5.0.0')  # known to produce incorrect results
     conflicts('+single_precision', when='@:7.2.4')
-    conflicts('+scalapack', when='^cray-libsci')
 
     # Propagate openmp to blas
     depends_on('openblas threads=openmp', when='+openmp ^openblas')
@@ -178,7 +177,6 @@ class Sirius(CMakePackage, CudaPackage, ROCmPackage):
         spec = self.spec
 
         args = [
-            self.define_from_variant('USE_CRAY_LIBSCI', 'libsci'),
             self.define_from_variant('USE_OPENMP', 'openmp'),
             self.define_from_variant('USE_ELPA', 'elpa'),
             self.define_from_variant('USE_MAGMA', 'magma'),
