@@ -141,9 +141,6 @@ class LlvmAmdgpu(CMakePackage):
     # Below patch is to look in the old path.
     patch("adjust-openmp-bitcode-directory-for-llvm-link.patch", when="@5.2.0:")
 
-    patch("glibc2.36.patch")
-    patch("noinline-attribute.patch", when="@:5.2.4")
-
     conflicts("^cmake@3.19.0")
 
     root_cmakelists_dir = "llvm"
