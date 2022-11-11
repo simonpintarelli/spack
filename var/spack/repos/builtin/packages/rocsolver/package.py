@@ -31,6 +31,8 @@ class Rocsolver(CMakePackage):
             size and compile time by adding specialized kernels \
             for small matrix sizes",
     )
+    variant("benchmarks", default=False, description="Build rocSOLVER benchmark client")
+    variant("samples", default=False, description="Build rocSOLVER samples")
 
     version("develop", branch="develop")
     version("master", branch="master")
@@ -109,6 +111,8 @@ class Rocsolver(CMakePackage):
 
     depends_on("googletest@1.10.0:", type="test")
     depends_on("netlib-lapack@3.7.1:", type="test")
+    depends_on("netlib-lapack@3.7.1:", when="+benchmarks")
+    depends_on("netlib-lapack@3.7.1:", when="+samples")
 
     patch("link-clients-blas.patch", when="@4.3.0:4.3.2")
 
@@ -166,9 +170,9 @@ class Rocsolver(CMakePackage):
 
     def cmake_args(self):
         args = [
-            self.define("BUILD_CLIENTS_SAMPLES", "OFF"),
             self.define("BUILD_CLIENTS_TESTS", self.run_tests),
-            self.define("BUILD_CLIENTS_BENCHMARKS", "OFF"),
+            self.define_from_variant("BUILD_CLIENTS_BENCHMARKS", variant="benchmarks"),
+            self.define_from_variant("BUILD_CLIENTS_SAMPLES", variant="samples"),
         ]
         if self.spec.satisfies("@4.1.0"):
             incl = self.spec["rocblas"].prefix
