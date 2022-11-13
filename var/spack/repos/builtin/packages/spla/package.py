@@ -37,6 +37,7 @@ class Spla(CMakePackage):
     variant("cuda", default=False, description="CUDA backend")
     variant("rocm", default=False, description="ROCm backend")
     variant("fortran", default=False, description="Build fortran module")
+    variant("tests", default=False, description="Build tests")
 
     conflicts("+cuda", when="+rocm", msg="+cuda and +rocm are mutually exclusive")
 
@@ -63,6 +64,7 @@ class Spla(CMakePackage):
             self.define_from_variant("SPLA_OMP", "openmp"),
             self.define_from_variant("SPLA_FORTRAN", "fortran"),
             self.define_from_variant("SPLA_STATIC", "static"),
+            self.define_from_variant("SPLA_BUILD_TESTS", "tests"),
         ]
 
         if "+cuda" in self.spec:
