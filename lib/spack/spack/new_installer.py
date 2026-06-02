@@ -2938,7 +2938,7 @@ class PackageInstaller:
                 self.log_paths[dag_hash] = os.devnull
             else:
                 log_fd, log_path = tempfile.mkstemp(
-                    prefix=f"spack-stage-{spec.name}-{spec.version}-{spec.dag_hash()}-",
+                    prefix=f"spack-stage-{spec.name}-{spec.version}-{spec.dag_hash()}-".replace(os.path.sep, "_"),
                     suffix=".log",
                     dir=spack.stage.get_stage_root(),
                 )
